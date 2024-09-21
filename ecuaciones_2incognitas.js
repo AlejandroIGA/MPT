@@ -35,6 +35,45 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
+//Función para validar el tipo de dato de entrada
+function inputValidation(input) {
+    //1. Manejar una raiz
+    let start = input.indexOf("^");
+    let len = input.length
+    if (start !== -1 && input.indexOf("/") !== -1) {
+        //  x^(a/b) o x^a/b
+        let raiz = input.slice(start + 1, len); // (a/b) o a/b
+        let valor = input.slice(0, start);
+
+        if (raiz.indexOf("(") !== -1 && raiz.indexOf(")") !== -1) {
+            raiz = input.slice(start + 2, len - 1)
+        }
+        //a/b
+        let middle = raiz.indexOf("/");
+        let a = raiz.slice(0, middle);
+        let b = raiz.slice(middle + 1, len - 1);
+
+        //console.log(`Valor de raiz ${valor} ** ${a} / ${b} = ${valor ** (a / b)}`);
+        let res = valor ** (a / b)
+        return res == "Infinity" ? "Ingrese valores más pequeños para la raiz" : res;
+    }
+    //2. Manejar una potencia
+    else if (start !== -1) {
+        let potencia = input.slice(start + 1, len); // (a) o a
+        let valor = input.slice(0, start);
+
+        if (potencia.indexOf("(") !== -1 && potencia.indexOf(")") !== -1) {
+            potencia = input.slice(start + 2, len - 1)
+        }
+
+        //console.log(`El valor de la potencia ${valor}^${potencia} = ${valor ** potencia}`);
+        let res = valor ** potencia;
+        return res == "Infinity" ? "Ingrese valores más pequeños para la potencia" : res;
+    }
+    //3. Si es un entero o decimal
+    return input;
+}
+
 // Función para solicitar datos de forma secuencial
 function askQuestions() {
     rl.question('Ingresa el valor de x1: ', (inputX1) => {
@@ -102,4 +141,10 @@ function askQuestions() {
     });
 }
 
-askQuestions();
+//askQuestions();
+
+console.log(inputValidation("234^15/3"));
+console.log(inputValidation("234^150"));
+console.log(inputValidation("234/150"));
+console.log(inputValidation("23"));
+console.log(inputValidation(".000023"));
