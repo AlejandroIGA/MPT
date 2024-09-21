@@ -1,5 +1,6 @@
 const readline = require('readline');
 const Fraction = require('fraction.js');
+const { stringify } = require('querystring');
 
 
 /*
@@ -40,22 +41,29 @@ function inputValidation(input) {
     //1. Manejar una raiz
     let start = input.indexOf("^");
     let len = input.length
+    let res = 0;
     if (start !== -1 && input.indexOf("/") !== -1) {
-        //  x^(a/b) o x^a/b
-        let raiz = input.slice(start + 1, len); // (a/b) o a/b
+        // x^(a/b)
+        let raiz = input.slice(start + 1, len); //(a/b)
         let valor = input.slice(0, start);
 
         if (raiz.indexOf("(") !== -1 && raiz.indexOf(")") !== -1) {
             raiz = input.slice(start + 2, len - 1)
-        }
-        //a/b
-        let middle = raiz.indexOf("/");
-        let a = raiz.slice(0, middle);
-        let b = raiz.slice(middle + 1, len - 1);
+            //a/b
+            let middle = raiz.indexOf("/");
+            let a = raiz.slice(0, middle);
+            let b = raiz.slice(middle + 1, len - 1);
 
-        //console.log(`Valor de raiz ${valor} ** ${a} / ${b} = ${valor ** (a / b)}`);
-        let res = valor ** (a / b)
-        return res == "Infinity" ? "Ingrese valores más pequeños para la raiz" : res;
+            //console.log(`Valor de raiz ${valor} ** ${a} / ${b} = ${valor ** (a / b)}`);
+            res = valor ** (a / b)
+        } else {
+            let middle = raiz.indexOf("/");
+            let a = raiz.slice(0, middle);
+            let b = raiz.slice(middle + 1, len - 1);
+            res = (valor ** a) / b
+        }
+
+        return res == "Infinity" ? "Ingresa un numero más pequeño para la raiz" : res;
     }
     //2. Manejar una potencia
     else if (start !== -1) {
@@ -68,31 +76,49 @@ function inputValidation(input) {
 
         //console.log(`El valor de la potencia ${valor}^${potencia} = ${valor ** potencia}`);
         let res = valor ** potencia;
-        return res == "Infinity" ? "Ingrese valores más pequeños para la potencia" : res;
+        return res == "Infinity" ? "Ingresa un numero más pequeño para la potencia" : res;
     }
     //3. Si es un entero o decimal
     return input;
 }
 
+function fractionConversor(input) {
+    //Este if mandaria un mensaje de erro enviado por el inputValidator
+    if (typeof (input) == "string") {
+        return input;
+    } else {
+        /*
+        Al parecer la libreía para fracciones soporta cierto numero de decimale en potencias de -10
+        por lo que aquí también se van a manejar mensajes de error.
+        */
+        let res = new Fraction(input);
+        if (input !== 0 && res == 0) {
+            return "Ingrese un valor con menos decimales";
+        }
+        return res;
+    }
+}
+
+
 // Función para solicitar datos de forma secuencial
 function askQuestions() {
     rl.question('Ingresa el valor de x1: ', (inputX1) => {
-        x1 = new Fraction(inputX1)
+        x1 = new Fraction(inputValidation(inputX1))
 
         rl.question('Ingresa el valor de y1: ', (inputY1) => {
-            y1 = new Fraction(inputY1)
+            y1 = new Fraction(inputValidation(inputY1))
 
             rl.question('Ingresa el valor de c1: ', (inputC1) => {
-                c1 = new Fraction(inputC1)
+                c1 = new Fraction(inputValidation(inputC1))
 
                 rl.question('Ingresa el valor de x2: ', (inputX2) => {
-                    x2 = new Fraction(inputX2)
+                    x2 = new Fraction(inputValidation(inputX2))
 
                     rl.question('Ingresa el valor de y2: ', (inputY2) => {
-                        y2 = new Fraction(inputY2)
+                        y2 = new Fraction(inputValidation(inputY2))
 
                         rl.question('Ingresa el valor de c2: ', (inputC2) => {
-                            c2 = new Fraction(inputC2)
+                            c2 = new Fraction(inputValidation(inputC2))
 
                             // Imprimir los valores ingresados
                             console.log('\nEcuaciones son:');
@@ -143,8 +169,16 @@ function askQuestions() {
 
 //askQuestions();
 
-console.log(inputValidation("234^15/3"));
+console.log(inputValidation("234^(-15/3)"));
+console.log(inputValidation("234^-15/3"));
 console.log(inputValidation("234^150"));
 console.log(inputValidation("234/150"));
 console.log(inputValidation("23"));
 console.log(inputValidation(".000023"));
+
+console.log(fractionConversor(inputValidation("234^(-15/3)")));
+console.log(fractionConversor(inputValidation("234^-15/3")));
+console.log(fractionConversor(inputValidation("234^150")))
+console.log(fractionConversor(inputValidation("234/150")))
+
+//askQuestions();
