@@ -1,6 +1,5 @@
 const readline = require('readline');
 const Fraction = require('fraction.js');
-const { stringify } = require('querystring');
 
 
 /*
@@ -84,17 +83,20 @@ function inputValidation(input) {
 
 function fractionConversor(input) {
     //Este if mandaria un mensaje de erro enviado por el inputValidator
-    if (typeof (input) == "string") {
+    console.log(input);
+    if (typeof (input) == "string" && input.includes("Ingresa")) {
         return input;
-    } else {
+    }
+    else {
         /*
         Al parecer la libreía para fracciones soporta cierto numero de decimale en potencias de -10
         por lo que aquí también se van a manejar mensajes de error.
         */
         let res = new Fraction(input);
         if (input !== 0 && res == 0) {
-            return "Ingrese un valor con menos decimales";
+            return "Ingrese un valor que genere menos decimales";
         }
+        res.simplify();
         return res;
     }
 }
@@ -167,9 +169,117 @@ function askQuestions() {
     });
 }
 
+function test() {
+    /* let x1 = "234^150";
+    let y1 = "234";
+    let c1 = "1/2";
+    let x2 = "234^-15/3"
+    let y2 = "3";
+    let c2 = ".5" */
+
+    let x1 = "2/3";
+    let y1 = ".074";
+    let c1 = "2/4";
+    let x2 = "33"
+    let y2 = "2^(1/2)";
+    let c2 = "1/2"
+
+    /* let x1 = "3";
+    let y1 = "2";
+    let c1 = "4";
+    let x2 = "2"
+    let y2 = "1";
+    let c2 = "3" */
+
+    let bandera = false; //no existen errores
+    let msg = "";
+
+    //1.Validar los datos de entrada
+    x1Validated = fractionConversor(inputValidation(x1));
+    y1Validated = fractionConversor(inputValidation(y1));
+    c1Validated = fractionConversor(inputValidation(c1));
+    x2Validated = fractionConversor(inputValidation(x2));
+    y2Validated = fractionConversor(inputValidation(y2));
+    c2Validated = fractionConversor(inputValidation(c2));
+
+    console.log(x1Validated.toFraction());
+    console.log();
+
+    //2.Ver si existe algun error
+    if (typeof (x1Validated) == "string") {
+        msg = msg + x1Validated + ". Valor ingresado: " + x1 + "\n";
+        bandera = true;
+    }
+    if (typeof (y1Validated) == "string") {
+        msg = msg + y1Validated + ". Valor ingresado: " + y1 + "\n";
+        bandera = true;
+    }
+    if (typeof (c1Validated) == "string") {
+        msg = msg + c1Validated + ". Valor ingresado: " + c1 + "\n";
+        bandera = true;
+    }
+    if (typeof (x2Validated) == "string") {
+        msg = msg + x2Validated + ". Valor ingresado: " + x2 + "\n";
+        bandera = true;
+    }
+    if (typeof (y2Validated) == "string") {
+        msg = msg + y2Validated + ". Valor ingresado: " + y2 + "\n";
+        bandera = true;
+    }
+    if (typeof (c2Validated) == "string") {
+        msg = msg + c2Validated + ". Valor ingresado: " + c2 + "\n";
+        bandera = true;
+    }
+
+    if (bandera) { //evitamos que se causen errores en las operaciones
+        return msg;
+    }
+
+    //Si no hay errores se procede a realizar las operaciones necesarias.
+    msg = msg + "Ecuaciones son: \n";
+    msg = msg + `${x1Validated.toFraction()}x${y1 >= 0 ? '+' + y1Validated.toFraction() : y1Validated.toFraction()}y = ${c1Validated.toFraction()} \n`;
+    msg = msg + `${x2Validated.toFraction()}x${y2 >= 0 ? '+' + y2Validated.toFraction() : y2Validated.toFraction()}y = ${c2Validated.toFraction()} \n \n`;
+
+    //imprimir en valores decimales, se le daria el formato en el front
+    msg = msg + `${x1Validated.valueOf()}x${y1 >= 0 ? '+' + y1Validated.valueOf() : y1Validated.valueOf()}y = ${c1Validated.valueOf()} \n`;
+    msg = msg + `${x2Validated.valueOf()}x${y2 >= 0 ? '+' + y2Validated.valueOf() : y2Validated.valueOf()}y = ${c2Validated.valueOf()} \n`;
+
+    //Obtener delta y evaluar si tiene solucón el sistema de ecuaciones
+    let delta = x1Validated.mul(y2Validated).sub(x2Validated.mul(y1Validated));
+    delta != 0 ? (msg = msg + `Tiene solución el valor de delta es: ${delta.toFraction()} = ${delta.valueOf()} \n\n`) : (msg = msg + `No tiene solución el valor de delta es ${delta.toFraction()} \n\n`);
+
+    //Obtener los deltas de x y
+    if (delta != 0) {
+
+        delta_x = c1Validated.mul(y2Validated).sub(c2Validated.mul(y1Validated)).div(delta.toFraction());
+        delta_y = x1Validated.mul(c2Validated).sub(x2Validated.mul(c1Validated)).div(delta.toFraction());
+
+
+        msg = msg + `El valor de delta x es: ${delta_x.toFraction()}  ${delta_x.valueOf()}\n`;
+        msg = msg + `El valor de delta y es: ${delta_y.toFraction()}  ${delta_y.valueOf()} \n`;
+
+        let sol_x1 = delta_x.mul(x1Validated);
+        let sol_y1 = delta_y.mul(y1Validated);
+
+        let sol_x2 = delta_x.mul(x2Validated);
+        let sol_y2 = delta_y.mul(y2Validated);
+
+
+        msg = msg +
+            `Solución ${sol_x1.toFraction()}${sol_y1 >= 0 ? ' +' + sol_y1.toFraction() : sol_y1.toFraction()} = ${sol_x1.add(sol_y1).toFraction()} = ${c1Validated.toFraction()} \n`
+            ;
+        msg = msg +
+            `Solución ${sol_x2.toFraction()}${sol_y2 >= 0 ? ' +' + sol_y2.toFraction() : sol_y2.toFraction()} = ${sol_x2.add(sol_y2).toFraction()} = ${c2Validated.toFraction()} \n`
+            ;
+    }
+
+    return msg;
+
+}
+
 //askQuestions();
 
-console.log(inputValidation("234^(-15/3)"));
+/* console.log(inputValidation("234^(-15/3)"));
 console.log(inputValidation("234^-15/3"));
 console.log(inputValidation("234^150"));
 console.log(inputValidation("234/150"));
@@ -179,6 +289,7 @@ console.log(inputValidation(".000023"));
 console.log(fractionConversor(inputValidation("234^(-15/3)")));
 console.log(fractionConversor(inputValidation("234^-15/3")));
 console.log(fractionConversor(inputValidation("234^150")))
-console.log(fractionConversor(inputValidation("234/150")))
+console.log(fractionConversor(inputValidation("234/150"))) */
 
-//askQuestions();
+console.log(test());
+
