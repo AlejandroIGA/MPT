@@ -55,11 +55,13 @@ function inputValidation(input) {
 
             //console.log(`Valor de raiz ${valor} ** ${a} / ${b} = ${valor ** (a / b)}`);
             res = valor ** (a / b)
+            res = res.toFixed(6);
         } else {
             let middle = raiz.indexOf("/");
             let a = raiz.slice(0, middle);
             let b = raiz.slice(middle + 1, len - 1);
             res = (valor ** a) / b
+            res = res.toFixed(6);
         }
 
         return res == "Infinity" ? "Ingresa un numero más pequeño para la raiz" : res;
