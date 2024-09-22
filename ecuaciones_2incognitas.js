@@ -104,7 +104,7 @@ function fractionConversor(input) {
 }
 
 
-// Función para solicitar datos de forma secuencial
+// ESTA FUNCION NO LA USEN
 function askQuestions() {
     rl.question('Ingresa el valor de x1: ', (inputX1) => {
         x1 = new Fraction(inputValidation(inputX1))
@@ -171,6 +171,7 @@ function askQuestions() {
     });
 }
 
+//ESTA FUNCION PARA HACER PRUEBAS
 function test() {
     /* let x1 = "234^150";
     let y1 = "234";
@@ -204,8 +205,91 @@ function test() {
     y2Validated = fractionConversor(inputValidation(y2));
     c2Validated = fractionConversor(inputValidation(c2));
 
-    console.log(x1Validated.toFraction());
-    console.log();
+    //2.Ver si existe algun error
+    if (typeof (x1Validated) == "string") {
+        msg = msg + x1Validated + ". Valor ingresado: " + x1 + "\n";
+        bandera = true;
+    }
+    if (typeof (y1Validated) == "string") {
+        msg = msg + y1Validated + ". Valor ingresado: " + y1 + "\n";
+        bandera = true;
+    }
+    if (typeof (c1Validated) == "string") {
+        msg = msg + c1Validated + ". Valor ingresado: " + c1 + "\n";
+        bandera = true;
+    }
+    if (typeof (x2Validated) == "string") {
+        msg = msg + x2Validated + ". Valor ingresado: " + x2 + "\n";
+        bandera = true;
+    }
+    if (typeof (y2Validated) == "string") {
+        msg = msg + y2Validated + ". Valor ingresado: " + y2 + "\n";
+        bandera = true;
+    }
+    if (typeof (c2Validated) == "string") {
+        msg = msg + c2Validated + ". Valor ingresado: " + c2 + "\n";
+        bandera = true;
+    }
+
+    if (bandera) { //evitamos que se causen errores en las operaciones
+        return msg;
+    }
+
+    //Si no hay errores se procede a realizar las operaciones necesarias.
+    msg = msg + "Ecuaciones son: \n";
+    msg = msg + `${x1Validated.toFraction()}x${y1 >= 0 ? '+' + y1Validated.toFraction() : y1Validated.toFraction()}y = ${c1Validated.toFraction()} \n`;
+    msg = msg + `${x2Validated.toFraction()}x${y2 >= 0 ? '+' + y2Validated.toFraction() : y2Validated.toFraction()}y = ${c2Validated.toFraction()} \n \n`;
+
+    //imprimir en valores decimales, se le daria el formato en el front
+    msg = msg + `${x1Validated.valueOf()}x${y1 >= 0 ? '+' + y1Validated.valueOf() : y1Validated.valueOf()}y = ${c1Validated.valueOf()} \n`;
+    msg = msg + `${x2Validated.valueOf()}x${y2 >= 0 ? '+' + y2Validated.valueOf() : y2Validated.valueOf()}y = ${c2Validated.valueOf()} \n`;
+
+    //Obtener delta y evaluar si tiene solucón el sistema de ecuaciones
+    let delta = x1Validated.mul(y2Validated).sub(x2Validated.mul(y1Validated));
+    delta != 0 ? (msg = msg + `Tiene solución el valor de delta es: ${delta.toFraction()} = ${delta.valueOf()} \n\n`) : (msg = msg + `No tiene solución el valor de delta es ${delta.toFraction()} \n\n`);
+
+    //Obtener los deltas de x y
+    if (delta != 0) {
+
+        delta_x = c1Validated.mul(y2Validated).sub(c2Validated.mul(y1Validated)).div(delta.toFraction());
+        delta_y = x1Validated.mul(c2Validated).sub(x2Validated.mul(c1Validated)).div(delta.toFraction());
+
+
+        msg = msg + `El valor de delta x es: ${delta_x.toFraction()}  ${delta_x.valueOf()}\n`;
+        msg = msg + `El valor de delta y es: ${delta_y.toFraction()}  ${delta_y.valueOf()} \n`;
+
+        let sol_x1 = delta_x.mul(x1Validated);
+        let sol_y1 = delta_y.mul(y1Validated);
+
+        let sol_x2 = delta_x.mul(x2Validated);
+        let sol_y2 = delta_y.mul(y2Validated);
+
+
+        msg = msg +
+            `Solución ${sol_x1.toFraction()}${sol_y1 >= 0 ? ' +' + sol_y1.toFraction() : sol_y1.toFraction()} = ${sol_x1.add(sol_y1).toFraction()} = ${c1Validated.toFraction()} \n`
+            ;
+        msg = msg +
+            `Solución ${sol_x2.toFraction()}${sol_y2 >= 0 ? ' +' + sol_y2.toFraction() : sol_y2.toFraction()} = ${sol_x2.add(sol_y2).toFraction()} = ${c2Validated.toFraction()} \n`
+            ;
+    }
+
+    return msg;
+
+}
+
+
+//LLAMAR A ESTA FUNCIÓN PARA EL FORMULARIO
+function getResult(x1, y1, c1, x2, y2, c2) {
+    let bandera = false; //no existen errores
+    let msg = "";
+
+    //1.Validar los datos de entrada
+    x1Validated = fractionConversor(inputValidation(x1));
+    y1Validated = fractionConversor(inputValidation(y1));
+    c1Validated = fractionConversor(inputValidation(c1));
+    x2Validated = fractionConversor(inputValidation(x2));
+    y2Validated = fractionConversor(inputValidation(y2));
+    c2Validated = fractionConversor(inputValidation(c2));
 
     //2.Ver si existe algun error
     if (typeof (x1Validated) == "string") {
@@ -293,5 +377,5 @@ console.log(fractionConversor(inputValidation("234^-15/3")));
 console.log(fractionConversor(inputValidation("234^150")))
 console.log(fractionConversor(inputValidation("234/150"))) */
 
-console.log(test());
+console.log(getResult("1", "2", "3", "1", "2", "3"));
 
