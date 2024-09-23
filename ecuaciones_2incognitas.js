@@ -85,7 +85,6 @@ function inputValidation(input) {
 
 function fractionConversor(input) {
     //Este if mandaria un mensaje de erro enviado por el inputValidator
-    console.log(input);
     if (typeof (input) == "string" && input.includes("Ingresa")) {
         return input;
     }
@@ -322,17 +321,21 @@ function getResult(x1, y1, c1, x2, y2, c2) {
     }
 
     //Si no hay errores se procede a realizar las operaciones necesarias.
-    msg = msg + "Ecuaciones son: \n";
-    msg = msg + `${x1Validated.toFraction()}x${y1 >= 0 ? '+' + y1Validated.toFraction() : y1Validated.toFraction()}y = ${c1Validated.toFraction()} \n`;
-    msg = msg + `${x2Validated.toFraction()}x${y2 >= 0 ? '+' + y2Validated.toFraction() : y2Validated.toFraction()}y = ${c2Validated.toFraction()} \n \n`;
+    msg = msg + "Ecuaciones ingresadas representación en fracciones: \n";
+    msg = msg + `${x1Validated.toFraction()}x${y1Validated >= 0 ? '+' : ""}${y1Validated.toFraction()}y = ${c1Validated.toFraction()} \n`;
+    msg = msg + `${x2Validated.toFraction()}x${y2Validated >= 0 ? '+' : ""}${y2Validated.toFraction()}y = ${c2Validated.toFraction()} \n \n`;
 
     //imprimir en valores decimales, se le daria el formato en el front
-    msg = msg + `${x1Validated.valueOf()}x${y1 >= 0 ? '+' + y1Validated.valueOf() : y1Validated.valueOf()}y = ${c1Validated.valueOf()} \n`;
-    msg = msg + `${x2Validated.valueOf()}x${y2 >= 0 ? '+' + y2Validated.valueOf() : y2Validated.valueOf()}y = ${c2Validated.valueOf()} \n`;
+    if (x1Validated.toFraction().indexOf("/") != -1 || x2Validated.toFraction().indexOf("/") != -1 || y1Validated.toFraction().indexOf("/") != -1 || y2Validated.toFraction().indexOf("/") != -1 || c1Validated.toFraction().indexOf("/") != -1 || c2Validated.toFraction().indexOf("/") != -1) {
+        msg = msg + "Ecuaciones ingresadas representación en decimales: \n";
+        msg = msg + `${x1Validated.valueOf()}x${y1Validated >= 0 ? '+' : ""}${y1Validated.valueOf()}y = ${c1Validated.valueOf()} \n`;
+        msg = msg + `${x2Validated.valueOf()}x${y2Validated >= 0 ? '+' : ""}${y1Validated.valueOf()}y = ${c2Validated.valueOf()} \n \n`;
+    }
+
 
     //Obtener delta y evaluar si tiene solucón el sistema de ecuaciones
     let delta = x1Validated.mul(y2Validated).sub(x2Validated.mul(y1Validated));
-    delta != 0 ? (msg = msg + `Tiene solución el valor de delta es: ${delta.toFraction()} = ${delta.valueOf()} \n\n`) : (msg = msg + `No tiene solución el valor de delta es ${delta.toFraction()} \n\n`);
+    delta != 0 ? (msg = msg + `Tiene solución. El valor de delta es: ${delta.toFraction()} = ${delta.valueOf()} \n\n`) : (msg = msg + `No tiene solución el valor de delta es ${delta.toFraction()} \n\n`);
 
     //Obtener los deltas de x y
     if (delta != 0) {
@@ -340,9 +343,8 @@ function getResult(x1, y1, c1, x2, y2, c2) {
         delta_x = c1Validated.mul(y2Validated).sub(c2Validated.mul(y1Validated)).div(delta.toFraction());
         delta_y = x1Validated.mul(c2Validated).sub(x2Validated.mul(c1Validated)).div(delta.toFraction());
 
-
-        msg = msg + `El valor de delta x es: ${delta_x.toFraction()}  ${delta_x.valueOf()}\n`;
-        msg = msg + `El valor de delta y es: ${delta_y.toFraction()}  ${delta_y.valueOf()} \n`;
+        msg = msg + `El valor de delta x es: ${delta_x.toFraction()}  ${(delta_x.toFraction()).indexOf("/") != -1 ? `En decimal ${delta_x.valueOf()}` : " "}\n`;
+        msg = msg + `El valor de delta y es: ${delta_y.toFraction()}  ${(delta_y.toFraction()).indexOf("/") != -1 ? `En decimal ${delta_y.valueOf()}` : " "}\n\n`;
 
         let sol_x1 = delta_x.mul(x1Validated);
         let sol_y1 = delta_y.mul(y1Validated);
@@ -350,13 +352,17 @@ function getResult(x1, y1, c1, x2, y2, c2) {
         let sol_x2 = delta_x.mul(x2Validated);
         let sol_y2 = delta_y.mul(y2Validated);
 
+        msg = msg + "Solución en representación de fracciones: \n"
 
-        msg = msg +
-            `Solución ${sol_x1.toFraction()}${sol_y1 >= 0 ? ' +' + sol_y1.toFraction() : sol_y1.toFraction()} = ${sol_x1.add(sol_y1).toFraction()} = ${c1Validated.toFraction()} \n`
-            ;
-        msg = msg +
-            `Solución ${sol_x2.toFraction()}${sol_y2 >= 0 ? ' +' + sol_y2.toFraction() : sol_y2.toFraction()} = ${sol_x2.add(sol_y2).toFraction()} = ${c2Validated.toFraction()} \n`
-            ;
+        msg = msg + `${x1Validated.toFraction()}(${delta_x.toFraction()})${y1Validated >= 0 ? '+' : ""}${y1Validated.toFraction()}(${delta_y.toFraction()}) = ${sol_x1.toFraction()}${sol_y1 >= 0 ? ' +' + sol_y1.toFraction() : sol_y1.toFraction()} = ${sol_x1.add(sol_y1).toFraction()}\n`;
+        msg = msg + `${x2Validated.toFraction()}(${delta_x.toFraction()})${y2Validated >= 0 ? '+' : ""}${y2Validated.toFraction()}(${delta_y.toFraction()}) = ${sol_x2.toFraction()}${sol_y2 >= 0 ? ' +' + sol_y2.toFraction() : sol_y2.toFraction()} = ${sol_x2.add(sol_y2).toFraction()}\n\n`;
+
+        if (x1Validated.toFraction().indexOf("/") != -1 || x2Validated.toFraction().indexOf("/") != -1 || y1Validated.toFraction().indexOf("/") != -1 || y2Validated.toFraction().indexOf("/") != -1 || c1Validated.toFraction().indexOf("/") != -1 || c2Validated.toFraction().indexOf("/") != -1) {
+            msg = msg + "Solución en representación de decimales: \n";
+            msg = msg + `${x1Validated.valueOf()}(${delta_x.valueOf()})${y1Validated >= 0 ? '+' : ""}${y1Validated.valueOf()}(${delta_y.valueOf()}) = ${sol_x1.valueOf()}${sol_y1 >= 0 ? ' +' + sol_y1.valueOf() : sol_y1.valueOf()} = ${sol_x1.add(sol_y1).valueOf()}\n`;
+            msg = msg + `${x2Validated.valueOf()}(${delta_x.valueOf()})${y2Validated >= 0 ? '+' : ""}${y2Validated.valueOf()}(${delta_y.valueOf()}) = ${sol_x2.valueOf()}${sol_y2 >= 0 ? ' +' + sol_y2.valueOf() : sol_y2.valueOf()} = ${sol_x2.add(sol_y2).valueOf()}\n`;
+        }
+
     }
 
     return msg;
@@ -377,5 +383,5 @@ console.log(fractionConversor(inputValidation("234^-15/3")));
 console.log(fractionConversor(inputValidation("234^150")))
 console.log(fractionConversor(inputValidation("234/150"))) */
 
-console.log(getResult("1", "2", "3", "1", "2", "3"));
+console.log(getResult("3", "7/2", "5", "1", "1", "4"));
 

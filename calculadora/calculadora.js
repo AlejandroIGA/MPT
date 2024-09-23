@@ -6,7 +6,7 @@ function inputValidation(input) {
     let start = input.indexOf("^");
     let len = input.length;
     let res = 0;
-    
+
     // Manejo de potencias fraccionarias
     if (start !== -1 && input.indexOf("/") !== -1) {
         let raiz = input.slice(start + 1, len);
@@ -55,7 +55,7 @@ function fractionConversor(input) {
 }
 
 function resolverEcuaciones() {
-    let resultado ="";
+    let resultado = "";
     // Obtener valores del formulario
     let x1 = document.getElementById('x1').value;
     let y1 = document.getElementById('y1').value;
@@ -63,6 +63,11 @@ function resolverEcuaciones() {
     let x2 = document.getElementById('x2').value;
     let y2 = document.getElementById('y2').value;
     let c2 = document.getElementById('c2').value;
+
+    if (x1 === "" || y1 === "" || c1 === "" || x2 === "" || y2 === "" || c2 === "") {
+        document.getElementById('resultado').textContent = "No se admiten valores vacíos";
+        return;
+    }
 
     // Validación y conversión a fracciones
     x1 = fractionConversor(inputValidation(x1));
@@ -81,14 +86,14 @@ function resolverEcuaciones() {
     // Calcular delta y verificar si tiene solución
     let delta = x1.mul(y2).sub(x2.mul(y1));
     //let resultado = `El valor de delta es: ${delta.toFraction()}\n`;
-    delta != 0 ? (resultado += `Tiene solución el valor de delta es: ${delta.toFraction()} = ${delta.valueOf()} \n\n`) : (resultado += `No tiene solución el valor de delta es ${delta.toFraction()} \n\n`);
+    delta != 0 ? (resultado += `Tiene solución. El valor de delta es: ${delta.toFraction()} = ${delta.valueOf().toFixed(6)} \n\n`) : (resultado += `No tiene solución el valor de delta es ${delta.toFraction()} \n\n`);
 
     if (delta.valueOf() != 0) {
         let delta_x = c1.mul(y2).sub(c2.mul(y1)).div(delta);
         let delta_y = x1.mul(c2).sub(x2.mul(c1)).div(delta);
 
-        resultado += `El valor de delta_x es: ${delta_x.toFraction()}\n`;
-        resultado += `El valor de delta_y es: ${delta_y.toFraction()}\n`;
+        resultado += `El valor de delta x es: ${delta_x.toFraction()} ${(delta_x.toFraction()).indexOf("/") != -1 ? `En decimal ${delta_x.valueOf().toFixed(6)}` : " "}\n`;
+        resultado += `El valor de delta y es: ${delta_y.toFraction()} ${(delta_y.toFraction()).indexOf("/") != -1 ? `En decimal ${delta_y.valueOf().toFixed(6)}` : " "}\n\n`;
 
         // Soluciones finales para las ecuaciones
         let sol_x1 = delta_x.mul(x1);
@@ -96,8 +101,15 @@ function resolverEcuaciones() {
         let sol_x2 = delta_x.mul(x2);
         let sol_y2 = delta_y.mul(y2);
 
-        resultado += `\nSolución 1: ${sol_x1.toFraction()} ${sol_y1 >= 0 ? '+' + sol_y1.toFraction() : sol_y1.toFraction()} = ${c1.toFraction()}\n`;
-        resultado += `Solución 2: ${sol_x2.toFraction()} ${sol_y2 >= 0 ? '+' + sol_y2.toFraction() : sol_y2.toFraction()} = ${c2.toFraction()}\n`;
+        resultado = resultado + "Solución en representación de decimales: \n";
+        resultado = resultado + `${x1.valueOf().toFixed(6)}(${delta_x.valueOf().toFixed(6)})${y1 >= 0 ? '+' : ""}${y1.valueOf().toFixed(6)}(${delta_y.valueOf().toFixed(6)}) = ${sol_x1.valueOf().toFixed(6)}${sol_y1 >= 0 ? ' +' + sol_y1.valueOf().toFixed(6) : sol_y1.valueOf().toFixed(6)} = ${sol_x1.add(sol_y1).valueOf().toFixed(6)}\n`;
+        resultado = resultado + `${x2.valueOf().toFixed(6)}(${delta_x.valueOf().toFixed(6)})${y2 >= 0 ? '+' : ""}${y2.valueOf().toFixed(6)}(${delta_y.valueOf().toFixed(6)}) = ${sol_x2.valueOf().toFixed(6)}${sol_y2 >= 0 ? ' +' + sol_y2.valueOf().toFixed(6) : sol_y2.valueOf().toFixed(6)} = ${sol_x2.add(sol_y2).valueOf().toFixed(6)}\n\n`;
+
+        if (x1.toFraction().indexOf("/") != -1 || x2.toFraction().indexOf("/") != -1 || y1.toFraction().indexOf("/") != -1 || y2.toFraction().indexOf("/") != -1 || c1.toFraction().indexOf("/") != -1 || c2.toFraction().indexOf("/") != -1) {
+            resultado = resultado + "Solución en representación de fracciones \n"
+            resultado = resultado + `${x1.toFraction()}(${delta_x.toFraction()})${y1 >= 0 ? '+' : ""}${y1.toFraction()}(${delta_y.toFraction()}) = ${sol_x1.toFraction()}${sol_y1 >= 0 ? ' +' + sol_y1.toFraction() : sol_y1.toFraction()} = ${sol_x1.add(sol_y1).toFraction()}\n`;
+            resultado = resultado + `${x2.toFraction()}(${delta_x.toFraction()})${y2 >= 0 ? '+' : ""}${y2.toFraction()}(${delta_y.toFraction()}) = ${sol_x2.toFraction()}${sol_y2 >= 0 ? ' +' + sol_y2.toFraction() : sol_y2.toFraction()} = ${sol_x2.add(sol_y2).toFraction()}\n\n`;
+        }
     } else {
         resultado += "No tiene solución\n";
     }
