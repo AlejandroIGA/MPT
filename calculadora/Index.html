@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolver Sistema de Ecuaciones</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Resolver un sistema de ecuaciones</h1>
+        
+        <div class="ecuacion">
+            <label>Ecuación 1</label>
+         </div>
+         <br>
+        <form id="ecuaciones-form">
+            <!-- Ecuación 1 -->
+            <div class="ecuacion">
+                <input type="text" id="x1" name="x1"><label for="x1"> x</label>
+                <input type="text" id="y1" name="y1"><label for="y1"> y  =</label>
+                <input type="text" id="c1" name="c1">
+            </div>
+        </form>
+        <br>
+        <div>
+            <label>Ecuación 2</label>
+         </div>
+         <br>
+        <form>
+            <!-- Ecuación 2 -->
+            <div class="ecuacion">
+                <input type="text" id="x2" name="x2"><label for="x2"> x </label>
+                <input type="text" id="y2" name="y2"><label for="y2">y  =</label>
+                <input type="text" id="c2" name="c2">
+            </div>
+        </form>
+        <form>
+            <button type="button" onclick="resolverEcuaciones()" class="container">Resolver</button>
+        </form>
+
+        <h2>Resultado:</h2>
+        <pre id="resultado"></pre>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fraction.js/fraction.min.js"></script>
+    <script src="calculadora.js"></script>
+</body>
+</html>
