@@ -9,6 +9,11 @@ no pueden tener más de 4 decimales, no se debe de aplicar redondeos.
 2. Cambiar la impresión en consola por una impresión dentro de la interfaz.
 
 3. Manejar cuando la resolución de una función tiende hacia infinito
+
+*Tal vez sería bueno limitar la cantidad de coordenadas que el usuarios puede ingresar,
+que no genere n-filas
+
+*También por tema de "experiencia" mostrar la formula con la se esta trabajando
 '''
 
 
