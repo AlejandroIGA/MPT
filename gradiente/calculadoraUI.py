@@ -129,6 +129,7 @@ def calcular_regresion():
         if index_b1 != -1:
             sub_b1 = str(b_val)[0:index_b1] + str(b_val)[index_b1:index_b1+decimales]
 
+        #print(sub_m0 == sub_m1 and sub_b0 == sub_b1,i)
         #Se imprimen los valores en consola cuando mn = mn-1 && bn=bn-1
         if(sub_m0 == sub_m1 and sub_b0 == sub_b1):
             resultado_texto = (f"Resultados finales después de {i} iteraciones:\n\n"
@@ -143,8 +144,8 @@ def calcular_regresion():
             resultado_texto = (f"Valores tienden a infinito, resultados después de {i} iteraciones:\n\n"
                                f"Sumatoria en m: {suma_m}\n"
                                f"Sumatoria en b: {suma_b}\n\n"
-                               f"Pendiente (m): {m_val}\n"
-                               f"Intersección (b): {b_val}")
+                               f"Pendiente anterior (m): {sub_m0} -> Nueva (m): {sub_m1}\n"
+                               f"Intersección anterior (b): {sub_b0} -> Nueva (b): {sub_b1}")
             resultado_label.config(text=resultado_texto)
             break
 
