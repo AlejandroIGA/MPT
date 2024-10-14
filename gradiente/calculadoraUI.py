@@ -12,6 +12,17 @@ def limitar_decimales(entry_text):
     except decimal.InvalidOperation:
         return False
 
+def limitar_decimales_especiales(entry_text):
+    if entry_text == "" or entry_text == "-":
+        return True
+    try:
+        value = decimal.Decimal(entry_text)
+        if value.as_tuple().exponent < -20:
+            return False
+        return True
+    except decimal.InvalidOperation:
+        return False
+
 def agregar_fila():
     if len(contenedor_filas) >= 5:
         resultado_label.config(text="No se pueden agregar más de 5 filas.")
@@ -78,7 +89,7 @@ def calcular_regresion():
     n = decimal.Decimal(len(coordenadas))
     while True:
         for coordenada in coordenadas:
-            suma_m += coordenada[0] * coordenada[1] - ((m_val * coordenada[0]) + b_val)
+            suma_m += coordenada[0] * (coordenada[1] - ((m_val * coordenada[0]) + b_val))
             suma_b += coordenada[1] - ((m_val * coordenada[0]) + b_val)
         suma_m *= (-2 / n)
         suma_b *= (-2 / n)
@@ -120,17 +131,18 @@ def calcular_regresion():
 
         #Se imprimen los valores en consola cuando mn = mn-1 && bn=bn-1
         if(sub_m0 == sub_m1 and sub_b0 == sub_b1):
-            resultado_texto = (f"Resultados finales:\n"
+            resultado_texto = (f"Resultados finales después de {i} iteraciones:\n\n"
                                f"Sumatoria en m: {suma_m}\n"
-                               f"Sumatoria en b: {suma_b}\n"
+                               f"Sumatoria en b: {suma_b}\n\n"
                                f"Pendiente anterior (m): {sub_m0} -> Nueva (m): {sub_m1}\n"
                                f"Intersección anterior (b): {sub_b0} -> Nueva (b): {sub_b1}")
             resultado_label.config(text=resultado_texto)
             break
 
-        if i >= 100000:
-            resultado_texto = (f"Valores infinitos, resultados después de 100,000 iteraciones:\n"
-                                f"\n"
+        if i >= 500000:
+            resultado_texto = (f"Valores tienden a infinito, resultados después de {i} iteraciones:\n\n"
+                               f"Sumatoria en m: {suma_m}\n"
+                               f"Sumatoria en b: {suma_b}\n\n"
                                f"Pendiente (m): {m_val}\n"
                                f"Intersección (b): {b_val}")
             resultado_label.config(text=resultado_texto)
@@ -161,6 +173,7 @@ contenedor_filas = []
 
 # Validación para limitar los decimales
 validacion_decimales = ventana.register(limitar_decimales)
+validacion_decimales_especiales = ventana.register(limitar_decimales_especiales)
 
 # Frame para contener los botones y las entradas
 frame_principal = tk.Frame(ventana, bg='#e9ecef')
@@ -173,7 +186,7 @@ entry_m = tk.Entry(fila_iniciales, validate="key", validatecommand=(validacion_d
 label_b = tk.Label(fila_iniciales, text="b:", bg='#f8f9fa', font=('Arial', 12))
 entry_b = tk.Entry(fila_iniciales, validate="key", validatecommand=(validacion_decimales, '%P'), font=('Arial', 12), width=10)
 label_alfa = tk.Label(fila_iniciales, text="alfa:", bg='#f8f9fa', font=('Arial', 12))
-entry_alfa = tk.Entry(fila_iniciales, validate="key", validatecommand=(validacion_decimales, '%P'), font=('Arial', 12), width=10)
+entry_alfa = tk.Entry(fila_iniciales, validate="key", validatecommand=(validacion_decimales_especiales, '%P'), font=('Arial', 12), width=10)
 
 # Empaquetar inputs
 fila_iniciales.pack(pady=10)
